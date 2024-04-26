@@ -1,0 +1,27 @@
+#!/bin/bash
+
+inpd=$1
+outd=$2
+
+if [ ! -d "$inpd" ]; then
+    echo "Не существует папки для взятия файлов"
+    exit 1
+fi
+
+if [ ! -d "$outd" ]; then
+    mkdir -p "$outd"
+    echo "Выходной папки не существует (создана автоматически с перенесением файлов)"
+fi
+
+find "$inpd" -type f | while read file; do
+    m=$(basename "$file")
+    if [ -f "${outd}/${m}" ]; then
+        i=1
+        while [ -f "${outd}/${m}.${i}" ]; do
+            i=$((i+1))
+        done
+        cp "$file" "${outd}/${m}.${i}"
+    else
+        cp "$file" "$outd"
+    fi
+done
